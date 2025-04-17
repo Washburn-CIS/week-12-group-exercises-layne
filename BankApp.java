@@ -1,18 +1,27 @@
-import java.util.Scanner;
+import java.util.*;
+import java.io.*;
+
 
 public class BankApp {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
         // create account
-        BankAccount[] accounts = {
-            new BankAccount(),
-            new BankAccount()
-        };
-        accounts[0].setId(1);
-        accounts[0].setName("Bill");
-        accounts[1].setId(2);
-        accounts[1].setName("Jill");
+        Scanner fin = null;
+        try {
+            fin = new Scanner(new File("bank.txt"));
+        } catch(FileNotFoundException e) {
+            System.out.println("bank data not here!");
+        }
+        int numAccounts = Integer.parseInt(fin.nextLine());  // determine number of records
+        BankAccount[] accounts = new BankAccount[numAccounts];
+        for(int i=0; i<numAccounts; i++) {
+            String[] tokens = fin.nextLine().split(",");
+            accounts[i] = new BankAccount();
+            accounts[i].setId(Integer.parseInt(tokens[0]));
+            accounts[i].setName(tokens[1]);
+            accounts[i].deposit(Double.parseDouble(tokens[2]));
+        }
 
         System.out.println("Welcome to the CM111 Bank Teller App!");
         while(true) {
@@ -23,8 +32,13 @@ public class BankApp {
             System.out.println(" 9) quit");
 
             System.out.print("Choose an option: ");
-
-            int choice = input.nextInt();
+            int choice = -1;  // default to invalid selection
+            try {
+                choice = input.nextInt();
+            } catch(InputMismatchException e) {
+                input.nextLine();    // burn bad input
+                // defer to default case in switch
+            }
             switch(choice) {
                 case 1:{
                     System.out.print("Enter account number: ");
@@ -53,6 +67,17 @@ public class BankApp {
                 }
                 case 9:
                     System.out.println("Bye!");
+                    try {
+                        PrintWriter fout = new PrintWriter(new File("bank.txt"));
+                        fout.println(accounts.length);  // store number of accounts on line 1
+                        for(BankAccount account : accounts) {
+                            fout.println(account.toString());
+                        }
+                        
+                        fout.close();
+                    } catch(FileNotFoundException e) {
+                        System.out.println("Error writing to file");
+                    }
                     System.exit(1);
                     break;
                 default:
