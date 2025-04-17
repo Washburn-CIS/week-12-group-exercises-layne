@@ -43,9 +43,13 @@ public class BankApp {
                 case 1:{
                     System.out.print("Enter account number: ");
                     int id = input.nextInt();
-                    System.out.printf("Account #%d has balance: %f%n", 
+                    if(id<=accounts.length) {
+                        System.out.printf("Account #%d has balance: %f%n", 
                            id-1, accounts[id-1].getBalance());
                     break;
+                    } else {System.out.printf("That account does not exist%n");
+                    break;
+                    }
                 }
                 case 2: {
                     System.out.print("Enter account number: ");
