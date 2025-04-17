@@ -30,4 +30,8 @@ public class BankAccount {
     public double getBalance() {
         return balance;
     }
+
+    public String toString() {
+        return id + "," + name + "," + balance;
+    }
 }
